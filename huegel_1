@@ -1,0 +1,55 @@
+import random
+import time
+
+N = 10
+arr = [random.randint(1, 100) for _ in range(N)]
+hill = None
+
+def print_array(arr, current=None):
+    for i in range(N):
+        if i == current:
+            print(f"\033[94m{arr[i]}\033[0m", end=" ") # blue
+        elif current is not None and abs(i - current) == 1:
+            if arr[i] > arr[current]:
+                print(f"\033[91m{arr[i]}\033[0m", end=" ") # red
+            elif arr[i] < arr[current]:
+                print(f"\033[92m{arr[i]}\033[0m", end=" ") # green
+            else:
+                print(f"\033[93m{arr[i]}\033[0m", end=" ") # orange
+        else:
+            print(arr[i], end=" ")
+    if current == hill:
+        print("*", end="")
+    print()
+
+start_time = time.time()
+
+print ("\n--- Finde den ersten Hügel in einem Array ---")
+
+print("\nArray:")
+print_array(arr)
+print()
+
+for i in range(N):
+    left_neighbor = arr[i-1] if i > 0 else None
+    right_neighbor = arr[i+1] if i < N-1 else None
+    
+    if (left_neighbor is None or arr[i] > left_neighbor) and (right_neighbor is None or arr[i] > right_neighbor):
+        hill = i
+        break
+    
+    print_array(arr, i)
+
+print()
+if hill is not None:
+    print("Hill:")
+    print(f"Position: {hill}, Value: \033[91m{arr[hill]}\033[0m") # red
+else:
+    print("Kein Hügel gefunden.")
+
+end_time = time.time()
+elapsed_time = end_time - start_time
+
+print(f"\nProgrammlaufzeit: {elapsed_time:.6f} Sekunden")
+
+print("\n--- Programm beendet. ---\n")

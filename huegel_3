@@ -1,0 +1,73 @@
+import random
+import time
+
+N = 70
+arr = [random.randint(1, 100) for _ in range(N)]
+hill = None
+call_count = 0
+
+def print_array(arr, current=None, start=None, end=None):
+    for i in range(N):
+        if i == current:
+            print(f"\033[94m{arr[i]}\033[0m", end=" ") # blue
+        elif current is not None and abs(i - current) == 1:
+            if arr[i] > arr[current]:
+                print(f"\033[91m{arr[i]}\033[0m", end=" ") # red
+            elif arr[i] < arr[current]:
+                print(f"\033[92m{arr[i]}\033[0m", end=" ") # green
+            else:
+                print(f"\033[93m{arr[i]}\033[0m", end=" ") # orange
+        elif start is not None and end is not None and start <= i <= end:
+            print(f"\033[93m{arr[i]}\033[0m", end=" ") # yellow
+        else:
+            print(arr[i], end=" ")
+    if current is not None and current == hill:
+        print("*", end="")
+    print()
+
+def find_hill(arr, start=0, end=None, verbose=False):
+    global call_count
+    call_count += 1
+    if end is None:
+        end = len(arr) - 1
+    if start > end:
+        return None
+    mid = (start + end) // 2
+    if verbose:
+        print_array(arr, mid)
+    if (mid == 0 or arr[mid] > arr[mid-1]) and (mid == len(arr)-1 or arr[mid] > arr[mid+1]):
+        return mid
+    elif mid > 0 and arr[mid-1] > arr[mid]:
+        if verbose:
+            print_array(arr, start=start, end=mid-1)
+        return find_hill(arr, start, mid-1, verbose)
+    else:
+        if verbose:
+            print_array(arr, start=mid+1, end=end)
+        return find_hill(arr, mid+1, end, verbose)
+
+print ("\n--- Finde einen Hügel in einem Array, mit einem >>rekursiven Algorithmus<< ---")
+
+verbose_input = input("\nMöchten Sie eine Kontrollausgabe während des Suchvorgangs sehen? (ja/nein): ")
+verbose = verbose_input.lower() == "j"
+       
+print("\nArray (Länge: {}):".format(len(arr)))
+if verbose:
+    print_array(arr)
+print()
+
+start_time = time.time()
+hill = find_hill(arr, verbose=verbose)
+end_time = time.time()
+
+print()
+print("Hill:")
+if hill is not None:
+    print(f"Position: {hill}, Value: \033[91m{arr[hill]}\033[0m") # red
+else:
+    print("No hills found")
+
+print(f"\nAnzahl der rekursiven Aufrufe: {call_count}")
+print(f"Laufzeit: {end_time - start_time:.6f} Sekunden")
+
+print("\n--- Programm beendet. ---\n")

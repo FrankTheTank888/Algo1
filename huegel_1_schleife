@@ -1,0 +1,42 @@
+import random
+import time
+import matplotlib.pyplot as plt
+
+def find_hill(N):
+    arr = [random.randint(1, 100) for _ in range(N)]
+    hill = None
+
+    for i in range(N):
+        left_neighbor = arr[i-1] if i > 0 else None
+        right_neighbor = arr[i+1] if i < N-1 else None
+
+        if (left_neighbor is None or arr[i] > left_neighbor) and (right_neighbor is None or arr[i] > right_neighbor):
+            hill = i
+            break
+
+    return hill, arr[hill] if hill is not None else None
+
+print ("\n--- Finde den ersten Hügel in einem Array ---")
+
+x_values = []
+y_values = []
+
+for N in range(100000, 1000001, 100000):
+    start_time = time.time()
+    
+    hill, hill_value = find_hill(N)
+    
+    end_time = time.time()
+    elapsed_time = end_time - start_time
+    
+    x_values.append(N)
+    y_values.append(elapsed_time)
+    
+    print(f"Array-Größe: {N}, Hügel-Position: {hill}, Hügel-Wert: {hill_value}, Programmlaufzeit: {elapsed_time:.6f} Sekunden")
+
+plt.plot(x_values, y_values)
+plt.xlabel('Durchläufe')
+plt.ylabel('Programmlaufzeit (Sekunden)')
+plt.show()
+
+print("\n--- Programm beendet. ---\n")
